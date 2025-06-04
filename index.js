@@ -38,13 +38,14 @@ async function run() {
       }
     }
 
-    // 遍历所有 issue，提取邮箱
+    // 遍历带有 subscribe 标签的 issue，提取邮箱
     let emails = new Set();
     let page = 1;
     while (true) {
       const issues = await octokit.rest.issues.listForRepo({
         ...repo,
         state: issueState,
+        labels: 'subscribe',
         per_page: 100,
         page,
       });
