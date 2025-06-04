@@ -13,20 +13,40 @@ A GitHub Action to check if an issue contains an email address, add a "subscribe
 ### Example Workflow
 
 ```yaml
-name: Email Subscribe Check
+name: Email Checker
 
 on:
   issues:
     types: [opened, edited, closed, reopened, labeled, unlabeled]
 
 jobs:
-  check-email:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run email subscribe checker
-        uses: weekdaycare/issue-email-checker@main
+      - uses: ./
         with:
-          issue_state: 'open' # open, closed, all
+          issue_state: open
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: prepare worktree
+        run: |
+          git fetch origin output
+          git worktree add output branch
+
+      - name: mv subscribe.json
+        run: |
+          mkdir -p branch/v2
+          cp subscribe.json branch/v2/subscribe.json
+
+      - name: push commit
+        run: |
+          cd branch
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add v2/subscribe.json
+          git commit -m "Update subscribe.json [bot]" || echo "No changes to commit"
+          git push origin HEAD:output
 ```
