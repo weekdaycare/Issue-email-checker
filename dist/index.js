@@ -34505,7 +34505,7 @@ async function run() {
     const context = github.context;
     const repo = context.repo;
 
-    // 1. 检查当前 issue 是否有邮箱，加/去 subscribe 标签
+    // 检查当前 issue 是否有邮箱，加/去 subscribe 标签
     if (context.payload.issue) {
       const issue = context.payload.issue;
       const body = issue.body || '';
@@ -34528,7 +34528,7 @@ async function run() {
       }
     }
 
-    // 2. 遍历所有 issue，提取邮箱
+    // 遍历所有 issue，提取邮箱
     let emails = new Set();
     let page = 1;
     while (true) {
@@ -34549,23 +34549,41 @@ async function run() {
     }
     emails = Array.from(emails);
 
-    // 3. 写入 /v2/subscribe.json
+    // 写入 /v2/subscribe.json
     fs.mkdirSync('v2', { recursive: true });
     const outPath = path.join('v2', 'subscribe.json');
     fs.writeFileSync(outPath, JSON.stringify(emails, null, 2));
 
-    // 4. 推送到 output 分支
-    // 拉取 output 分支
+    // 推送到 output 分支
     const execSync = (__nccwpck_require__(5317).execSync);
+
+    // 配置 git 用户信息
     execSync('git config user.name "github-actions[bot]"');
     execSync('git config user.email "github-actions[bot]@users.noreply.github.com"');
-    execSync('git fetch origin output:output || git checkout --orphan output');
-    execSync('git checkout output');
+
+    // 拉取 output 分支或创建新的分支
+    try {
+      execSync('git fetch origin output');
+      execSync('git checkout output');
+    } catch (error) {
+      core.info('Output branch does not exist, creating a new branch.');
+      execSync('git checkout --orphan output');
+    }
+
+    // 确保 /v2 目录存在并复制文件
     fs.mkdirSync('v2', { recursive: true });
     fs.copyFileSync(outPath, outPath);
+
+    // 提交更改
     execSync('git add v2/subscribe.json');
-    execSync('git commit -m "Update subscribe.json" || echo "No changes to commit"');
-    execSync('git push origin output');
+    try {
+      execSync('git commit -m "Update subscribe.json"');
+    } catch (error) {
+      core.info('No changes to commit.');
+    }
+
+    // 强制推送到远程 output 分支
+    execSync('git push origin output --force');
 
     core.info(`Emails extracted: ${emails.length}`);
   } catch (error) {
