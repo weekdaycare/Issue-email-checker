@@ -1,0 +1,17 @@
+name: Test Email Action
+
+on:
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./
+        with:
+          issue_state: open
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

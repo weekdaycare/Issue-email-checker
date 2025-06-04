@@ -1,0 +1,14 @@
+name: 'Issue Email Subscribe Checker'
+description: 'Check if issue contains email, add subscribe label, generate emails.json and push to output branch'
+author: 'weekdaycare'
+inputs:
+  issue_state:
+    description: 'State of issues to fetch (open, closed, or all)'
+    required: false
+    default: 'open'
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
+branding:
+  icon: 'mail'
+  color: 'blue'
