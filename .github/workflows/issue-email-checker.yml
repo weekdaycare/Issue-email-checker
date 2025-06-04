@@ -2,7 +2,7 @@ name: Test Email Action
 
 on:
   issues:
-    types: [opened, edited]
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
 
 jobs:
   test:

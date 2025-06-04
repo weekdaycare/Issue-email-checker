@@ -17,13 +17,13 @@ name: Email Subscribe Check
 
 on:
   issues:
-    types: [opened, edited]
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
 
 jobs:
   check-email:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Run email subscribe checker
         uses: weekdaycare/issue-email-checker@main
