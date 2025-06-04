@@ -62,7 +62,8 @@ async function run() {
 
     // 写入 subscribe.json
     const outPath = path.join('subscribe.json');
-    fs.writeFileSync(outPath, JSON.stringify(emails, null, 2));
+    const subscribeData = { emails };
+    fs.writeFileSync(outPath, JSON.stringify(subscribeData, null, 2));
 
     core.info(`Emails extracted: ${emails.length}`);
   } catch (error) {
