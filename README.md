@@ -8,8 +8,7 @@ A GitHub Action to check if an issue contains an email address, add a "subscribe
 
 | Name           | Description                         | Required |
 |----------------|-------------------------------------|----------|
-| `github_token` | GitHub token for authentication     | Yes      |
-| `issue_number` | The issue number to check           | Yes      |
+| `issue_state`  | The issue state to check            | no       |
 
 ### Example Workflow
 
@@ -29,7 +28,5 @@ jobs:
       - name: Run email subscribe checker
         uses: weekdaycare/issue-email-checker@main
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          issue_number: ${{ github.event.issue.number }}
           issue_state: 'open' # open, closed, all
 ```

@@ -1,12 +1,7 @@
 name: 'Issue Email Subscribe Checker'
 description: 'Check if issue contains email, add subscribe label, generate emails.json and push to output branch'
+author: 'weekdaycare'
 inputs:
-  github_token:
-    description: 'GitHub token'
-    required: true
-  issue_number:
-    description: 'Issue number to check'
-    required: true
   issue_state:
     description: 'State of issues to fetch (open, closed, or all)'
     required: false

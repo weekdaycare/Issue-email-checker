@@ -1,18 +1,17 @@
-name: Email Subscribe Check
+name: Test Email Action
 
 on:
   issues:
     types: [opened, edited]
 
 jobs:
-  check-email:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run email subscribe checker
-        uses: weekdaycare/issue-email-checker@main
+      - uses: ./
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          issue_number: ${{ github.event.issue.number }}
-          issue_state: 'open' # open, closed, all
+          issue_state: open
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
