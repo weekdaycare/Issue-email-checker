@@ -31,19 +31,35 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Ensure output branch exists
+        run: |
+          if ! git ls-remote --exit-code --heads origin output; then
+            echo "output branch does not exist, creating..."
+            # 基于空树创建 orphan 分支
+            git checkout --orphan output
+            git rm -rf .
+            echo '{}' > .init.json # 占位文件，防止空提交
+            git add .init.json
+            git commit -m "Initialize output branch"
+            git push origin output
+            git checkout main
+          else
+            echo "output branch exists"
+          fi
+
       - name: prepare worktree
         run: |
           git fetch origin output
-          git worktree add output branch
+          git worktree add output output
 
       - name: mv subscribe.json
         run: |
-          mkdir -p branch/v2
-          cp subscribe.json branch/v2/subscribe.json
+          mkdir -p output/v2
+          cp subscribe.json output/v2/subscribe.json
 
       - name: push commit
         run: |
-          cd branch
+          cd output
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add v2/subscribe.json
